@@ -1,7 +1,7 @@
 Package: manydata
 Title: A Portal for Global Governance Data
-Version: 0.8.1
-Date: 2022-11-11
+Version: 0.8.2
+Date: 2022-11-17
 Authors@R: 
     c(person(given = "James",
              family = "Hollway",
@@ -41,7 +41,7 @@ LazyData: true
 RoxygenNote: 7.2.1
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2022-11-11 10:27:19 UTC; henriquesposito
+Packaged: 2022-11-17 15:45:30 UTC; henriquesposito
 Author: James Hollway [cre, aut, ctb] (IHEID,
     <https://orcid.org/0000-0002-8361-9647>),
   Henrique Sposito [ctb] (IHEID, <https://orcid.org/0000-0003-3420-6085>),
@@ -50,4 +50,4 @@ Author: James Hollway [cre, aut, ctb] (IHEID,
   Jael Tan [ctb] (IHEID, <https://orcid.org/0000-0002-6234-9764>)
 Maintainer: James Hollway <james.hollway@graduateinstitute.ch>
 Repository: CRAN
-Date/Publication: 2022-11-11 11:00:02 UTC
+Date/Publication: 2022-11-19 13:00:10 UTC

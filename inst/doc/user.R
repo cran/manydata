@@ -27,8 +27,10 @@ emperors %>%
   })
 
 ## ----consolidate--------------------------------------------------------------
-consolidate(database = emperors, rows = "any", cols = "any", resolve = "coalesce", key = "ID")
-consolidate(database = emperors, rows = "every", cols = "every", resolve = "coalesce", key = "ID")
+consolidate(database = emperors, rows = "any", cols = "any",
+            resolve = "coalesce", key = "ID")
+consolidate(database = emperors, rows = "every", cols = "every",
+            resolve = "coalesce", key = "ID")
 
 ## ----resolve------------------------------------------------------------------
 consolidate(database = emperors, rows = "any", cols = "every", resolve = "max", key = "ID")
