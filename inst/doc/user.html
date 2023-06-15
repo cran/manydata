@@ -12,7 +12,7 @@
 
 <meta name="author" content="James Hollway and Henrique Sposito" />
 
-<meta name="date" content="2022-11-17" />
+<meta name="date" content="2023-06-15" />
 
 <title>Working with manydata</title>
 
@@ -121,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -333,17 +340,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Working with manydata</h1>
 <h4 class="author">James Hollway and Henrique Sposito</h4>
-<h4 class="date">2022-11-17</h4>
+<h4 class="date">2023-06-15</h4>
 
 
 
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(manydata)</span></code></pre></div>
-<pre><code>## Registered S3 method overwritten by &#39;geojsonlint&#39;:
-##   method         from 
-##   print.location dplyr</code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;ggforce&#39;:
-##   method           from 
-##   scale_type.units units</code></pre>
 <div id="discovering-data" class="section level2">
 <h2>Discovering data</h2>
 <p>The first thing users of the package will want to do is to identify
@@ -354,7 +355,7 @@ GitHub. To make it easier to identify all packages in the many packages
 universe, we have developed the <code>get_packages()</code> function.
 The function lists the many packages available and allow users to
 download them.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_packages</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_packages</span>()</span></code></pre></div>
 </div>
 <div id="understanding-data" class="section level2">
 <h2>Understanding data</h2>
@@ -390,26 +391,26 @@ as before, only specifying which package we want to ‘get’,
 <p>For now, let’s work with the Roman Emperors database included in
 manydata. We can get a quick summary of the datasets included in this
 package with the following command:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="at">package =</span> <span class="st">&quot;manydata&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(emperors, <span class="at">package =</span> <span class="st">&quot;manydata&quot;</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>emperors</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="at">package =</span> <span class="st">&quot;manydata&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(emperors, <span class="at">package =</span> <span class="st">&quot;manydata&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>emperors</span></code></pre></div>
 <pre><code>## $wikipedia
 ## # A tibble: 68 × 15
-##    ID        Beg    End   FullN…¹ Birth Death CityB…² Provi…³ Rise  Cause Killer
-##    &lt;chr&gt;     &lt;mdat&gt; &lt;mda&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; 
-##  1 Augustus  -0026… 0014… IMPERA… 0062… 0014… Rome    Italia  Birt… Assa… Wife  
-##  2 Tiberius  0014-… 0037… TIBERI… 0041… 0037… Rome    Italia  Birt… Assa… Other…
-##  3 Caligula  0037-… 0041… GAIVS … 0012… 0041… Antitum Italia  Birt… Assa… Senate
-##  4 Claudius  0041-… 0054… TIBERI… 0009… 0054… Lugdun… Gallia… Birt… Assa… Wife  
-##  5 Nero      0054-… 0068… NERO C… 0037… 0068… Antitum Italia  Birt… Suic… Senate
-##  6 Galba     0068-… 0069… SERVIV… 0002… 0069… Terrac… Italia  Seiz… Assa… Other…
-##  7 Otho      0069-… 0069… MARCVS… 0032… 0069… Terent… Italia  Appo… Suic… Other…
-##  8 Vitellius 0069-… 0069… AVLVS … 0015… 0069… Rome    Italia  Seiz… Assa… Other…
-##  9 Vespasian 0069-… 0079… TITVS … 0009… 0079… Falacr… Italia  Seiz… Natu… Disea…
-## 10 Titus     0079-… 0081… TITVS … 0039… 0081… Rome    Italia  Birt… Natu… Disea…
-## # … with 58 more rows, 4 more variables: Dynasty &lt;chr&gt;, Era &lt;chr&gt;, Notes &lt;chr&gt;,
-## #   Verif &lt;chr&gt;, and abbreviated variable names ¹​FullName, ²​CityBirth,
-## #   ³​ProvinceBirth
+##    ID       Beg   End   FullName Birth Death CityBirth ProvinceBirth Rise  Cause
+##    &lt;chr&gt;    &lt;mda&gt; &lt;mda&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;
+##  1 Augustus -002… 0014… IMPERAT… 0062… 0014… Rome      Italia        Birt… Assa…
+##  2 Tiberius 0014… 0037… TIBERIV… 0041… 0037… Rome      Italia        Birt… Assa…
+##  3 Caligula 0037… 0041… GAIVS I… 0012… 0041… Antitum   Italia        Birt… Assa…
+##  4 Claudius 0041… 0054… TIBERIV… 0009… 0054… Lugdunum  Gallia Lugdu… Birt… Assa…
+##  5 Nero     0054… 0068… NERO CL… 0037… 0068… Antitum   Italia        Birt… Suic…
+##  6 Galba    0068… 0069… SERVIVS… 0002… 0069… Terracina Italia        Seiz… Assa…
+##  7 Otho     0069… 0069… MARCVS … 0032… 0069… Terentin… Italia        Appo… Suic…
+##  8 Vitelli… 0069… 0069… AVLVS V… 0015… 0069… Rome      Italia        Seiz… Assa…
+##  9 Vespasi… 0069… 0079… TITVS F… 0009… 0079… Falacrine Italia        Seiz… Natu…
+## 10 Titus    0079… 0081… TITVS F… 0039… 0081… Rome      Italia        Birt… Natu…
+## # ℹ 58 more rows
+## # ℹ 5 more variables: Killer &lt;chr&gt;, Dynasty &lt;chr&gt;, Era &lt;chr&gt;, Notes &lt;chr&gt;,
+## #   Verif &lt;chr&gt;
 ## 
 ## $UNRV
 ## # A tibble: 99 × 7
@@ -425,7 +426,7 @@ package with the following command:</p>
 ##  8 Vitellius        0069    0069    15    69    Aulus Vitellius / Aulus… Year o…
 ##  9 Vespasian        0069    0079    9     79    Titus Flavius Vespasian… Year o…
 ## 10 Titus            0079    0081    39    79    Titus Flavius Vespasian… Flavian
-## # … with 89 more rows
+## # ℹ 89 more rows
 ## 
 ## $britannica
 ## # A tibble: 87 × 3
@@ -441,7 +442,7 @@ package with the following command:</p>
 ##  8 Aulus Vitellius 0069-07 0069-12
 ##  9 Vespasian       0069    0079   
 ## 10 Titus           0079    0081   
-## # … with 77 more rows</code></pre>
+## # ℹ 77 more rows</code></pre>
 <p>We can see that there are three named datasets relating to emperors
 here: <code>wikipedia</code> (dataset assembled from Wikipedia pages),
 <code>UNVR</code> (United Nations of Roman Vitrix), and
@@ -451,7 +452,7 @@ wish to understand their differences, summarise variables across them,
 and perhaps also rerun models across them.</p>
 <p>To retrieve an individual dataset from this database, we can use the
 <code>pluck()</code> function.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>wikipedia <span class="ot">&lt;-</span> <span class="fu">pluck</span>(emperors, <span class="st">&quot;wikipedia&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>wikipedia <span class="ot">&lt;-</span> <span class="fu">pluck</span>(emperors, <span class="st">&quot;wikipedia&quot;</span>)</span></code></pre></div>
 <p>However, the real value of the various ‘many packages’ is that
 multiple datasets relating to the same phenomenon are presented
 together.</p>
@@ -481,12 +482,12 @@ sources, we can use <code>data_source()</code> and
 <code>data_contrast()</code>.</p>
 <p>The <code>data_source()</code> function displays bibliographic
 references for the datasets within a database.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data_source</span>(<span class="at">pkg =</span> <span class="st">&quot;manydata&quot;</span>, <span class="at">database =</span> <span class="cn">NULL</span>, <span class="at">dataset =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data_source</span>(<span class="at">pkg =</span> <span class="st">&quot;manydata&quot;</span>, <span class="at">database =</span> <span class="cn">NULL</span>, <span class="at">dataset =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>## Component 1 :
 ##            Reference                                                                                                        
-## wikipedia  &quot;(????). &quot;List_of_Roman_emperors.&quot; &lt;URL:tps://en.wikipedia.org/wiki/List_of_Roman_emperors&gt;. Accesse&quot; [truncated]
-## UNRV       &quot;(????). &quot;Roman Emperor list.&quot; &lt;URL:https://www.unrv.com/government/emperor.php&gt;. Accessed: 2021-07-&quot; [truncated]
-## britannica &quot;(????). &quot;List of Roman emperors.&quot; &lt;URL:https://www.britannica.com/topic/list-of-Roman-emperors-2043&quot; [truncated]</code></pre>
+## wikipedia  &quot;(????). &quot;List_of_Roman_emperors.&quot;&lt;tps://en.wikipedia.org/wiki/List_of_Roman_emperors&gt;. Accessed:202&quot; [truncated]
+## UNRV       &quot;(????). &quot;Roman Emperor list.&quot;&lt;https://www.unrv.com/government/emperor.php&gt;. Accessed: 2021-07-22.&quot;              
+## britannica &quot;(????). &quot;List of Roman emperors.&quot;&lt;https://www.britannica.com/topic/list-of-Roman-emperors-2043294&gt;.&quot; [truncated]</code></pre>
 <p>The <code>data_contrast()</code> function returns a data frame with
 the key metadata of each level of data objects (many package, database,
 and dataset). This metadata includes the following elements:</p>
@@ -498,7 +499,7 @@ and dataset). This metadata includes the following elements:</p>
 <li>Latest end date</li>
 <li>Source URL</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data_contrast</span>(<span class="at">pkg =</span> <span class="st">&quot;manydata&quot;</span>, <span class="at">database =</span> <span class="cn">NULL</span>, <span class="at">dataset =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data_contrast</span>(<span class="at">pkg =</span> <span class="st">&quot;manydata&quot;</span>, <span class="at">database =</span> <span class="cn">NULL</span>, <span class="at">dataset =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>## emperors :
 ##            Unique ID Missing Data Rows Columns         Beg         End
 ## wikipedia         68        9.9 %   68      15 -0026-01-16  0014-08-19
@@ -523,12 +524,12 @@ the “Beg” variable, which represents when emperors began their reign
 (removing any NAs). Since manydata datasets are always ordered by “Beg”
 (and then “ID”), we can remove any subsequent (duplicated) entries by ID
 to concentrate on first appearances.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>emperors <span class="sc">%&gt;%</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map</span>(<span class="cf">function</span>(x){</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    x <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(ID)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="fu">mean</span>(Beg, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  })</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>emperors <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map</span>(<span class="cf">function</span>(x){</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    x <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(ID)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="fu">mean</span>(Beg, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  })</span></code></pre></div>
 <pre><code>## $wikipedia
 ## # A tibble: 68 × 1
 ##    `mean(Beg, na.rm = TRUE)`
@@ -543,7 +544,7 @@ to concentrate on first appearances.</p>
 ##  8 0069-04-17               
 ##  9 0069-12-21               
 ## 10 0079-06-24               
-## # … with 58 more rows
+## # ℹ 58 more rows
 ## 
 ## $UNRV
 ## # A tibble: 98 × 1
@@ -559,7 +560,7 @@ to concentrate on first appearances.</p>
 ##  8 0069-07-02               
 ##  9 0069-07-02               
 ## 10 0079-07-02               
-## # … with 88 more rows
+## # ℹ 88 more rows
 ## 
 ## $britannica
 ## # A tibble: 87 × 1
@@ -575,7 +576,7 @@ to concentrate on first appearances.</p>
 ##  8 0069-07-16               
 ##  9 0069-07-02               
 ## 10 0079-07-02               
-## # … with 77 more rows</code></pre>
+## # ℹ 77 more rows</code></pre>
 </div>
 </div>
 <div id="consolidating-data" class="section level2">
@@ -595,29 +596,29 @@ dataset (i.e. units or variables present in at least one of the datasets
 in the database) or units and variables coded in “every” dataset
 (i.e. units or variables present in all of the datasets in the
 database).</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>,</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">resolve =</span> <span class="st">&quot;coalesce&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">resolve =</span> <span class="st">&quot;coalesce&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
 <pre><code>## There were 116 matched observations by ID variable across datasets in database.</code></pre>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
 <pre><code>## # A tibble: 138 × 15
-##    ID           CityB…¹ Provi…² Rise  Cause Killer Era   Notes Verif Birth Death
-##    &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 Aemilian     &lt;NA&gt;    Africa  Appo… Assa… Other… Prin… birt… &lt;NA&gt;  0207… 0253…
-##  2 Allectus     &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  ?     297  
-##  3 Anastasius   &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  430   518  
-##  4 Anthemius    &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  420   472  
-##  5 Antoninus P… &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  86    161  
-##  6 Antonius Pi… Lanuvi… Italia  Birt… Natu… Disea… Prin… &lt;NA&gt;  &lt;NA&gt;  0086… 0161…
-##  7 Arcadius     &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  377   408  
-##  8 Augustus     Rome    Italia  Birt… Assa… Wife   Prin… birt… Redd… 0062… 0014…
-##  9 Aulus Vitel… &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
-## 10 Aurelian     Sirmium Pannon… Appo… Assa… Praet… Prin… &lt;NA&gt;  &lt;NA&gt;  0214… 0275…
-## # … with 128 more rows, 4 more variables: FullName &lt;chr&gt;, Dynasty &lt;chr&gt;,
-## #   Beg &lt;mdate&gt;, End &lt;mdate&gt;, and abbreviated variable names ¹​CityBirth,
-## #   ²​ProvinceBirth</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>,</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">resolve =</span> <span class="st">&quot;coalesce&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
+##    ID         CityBirth ProvinceBirth Rise  Cause Killer Era   Notes Verif Birth
+##    &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 Aemilian   &lt;NA&gt;      Africa        Appo… Assa… Other… Prin… birt… &lt;NA&gt;  0207…
+##  2 Allectus   &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  ?    
+##  3 Anastasius &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  430  
+##  4 Anthemius  &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  420  
+##  5 Antoninus… &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  86   
+##  6 Antonius … Lanuvium  Italia        Birt… Natu… Disea… Prin… &lt;NA&gt;  &lt;NA&gt;  0086…
+##  7 Arcadius   &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  377  
+##  8 Augustus   Rome      Italia        Birt… Assa… Wife   Prin… birt… Redd… 0062…
+##  9 Aulus Vit… &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## 10 Aurelian   Sirmium   Pannonia      Appo… Assa… Praet… Prin… &lt;NA&gt;  &lt;NA&gt;  0214…
+## # ℹ 128 more rows
+## # ℹ 5 more variables: Death &lt;chr&gt;, FullName &lt;chr&gt;, Dynasty &lt;chr&gt;, Beg &lt;mdate&gt;,
+## #   End &lt;mdate&gt;</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">resolve =</span> <span class="st">&quot;coalesce&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
 <pre><code>## There were 116 matched observations by ID variable across datasets in database.</code></pre>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
@@ -634,7 +635,7 @@ database).</p>
 ##  8 Claudius       0041-01-25  0054-10-13 
 ##  9 Commodus       0177        0192-12-31 
 ## 10 Constantine II 0337-05-22  0340-01-01 
-## # … with 31 more rows</code></pre>
+## # ℹ 31 more rows</code></pre>
 <p>Users can also choose how they want to resolve conflicts between
 observations in <code>consolidate()</code> with several ‘resolve’
 methods:</p>
@@ -646,7 +647,7 @@ methods:</p>
 <li>median: the median value</li>
 <li>random: a random value</li>
 </ul>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;max&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;max&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
 <pre><code>## There were 116 matched observations by ID variable across datasets in database.</code></pre>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
@@ -663,28 +664,28 @@ methods:</p>
 ##  8 Augustus        -031-12-31 0014-12-31
 ##  9 Aulus Vitellius 0069-07    0069-12   
 ## 10 Aurelian        0270-12-31 0275-12-31
-## # … with 128 more rows</code></pre>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;min&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
+## # ℹ 128 more rows</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;min&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
 <pre><code>## There were 116 matched observations by ID variable across datasets in database.</code></pre>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
 <pre><code>## # A tibble: 41 × 15
-##    ID           CityB…¹ Provi…² Rise  Cause Killer Era   Notes Verif Birth Death
-##    &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 Aemilian     &lt;NA&gt;    Africa  Appo… Assa… Other… Prin… birt… &lt;NA&gt;  0207… 0253…
-##  2 Augustus     Rome    Italia  Birt… Assa… Wife   Prin… birt… Redd… 0062… 0014…
-##  3 Aurelian     Sirmium Pannon… Appo… Assa… Praet… Prin… &lt;NA&gt;  &lt;NA&gt;  0214… 0275…
-##  4 Balbinus     &lt;NA&gt;    Unknown Appo… Assa… Praet… Prin… birt… &lt;NA&gt;  0178… 0238…
-##  5 Caracalla    Lugdun… Gallia… Birt… Assa… Other… Prin… reig… &lt;NA&gt;  0188… 0217…
-##  6 Carinus      &lt;NA&gt;    Unknown Birt… Died… Oppos… Prin… deat… &lt;NA&gt;  ?     0285…
-##  7 Carus        Narbo   Gallia… Seiz… Natu… Light… Prin… birt… &lt;NA&gt;  0230… 0283…
-##  8 Claudius     Lugdun… Gallia… Birt… Assa… Wife   Prin… birt… Redd… 0009… 0054…
-##  9 Commodus     Lanuvi… Italia  Birt… Assa… Praet… Prin… reig… &lt;NA&gt;  0161… 0192…
-## 10 Constantine… Arelate Gallia… Birt… Exec… Other… Domi… birt… &lt;NA&gt;  0316… 0340…
-## # … with 31 more rows, 4 more variables: FullName &lt;chr&gt;, Dynasty &lt;chr&gt;,
-## #   Beg &lt;chr&gt;, End &lt;chr&gt;, and abbreviated variable names ¹​CityBirth,
-## #   ²​ProvinceBirth</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;mean&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
+##    ID         CityBirth ProvinceBirth Rise  Cause Killer Era   Notes Verif Birth
+##    &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 Aemilian   &lt;NA&gt;      Africa        Appo… Assa… Other… Prin… birt… &lt;NA&gt;  0207…
+##  2 Augustus   Rome      Italia        Birt… Assa… Wife   Prin… birt… Redd… 0062…
+##  3 Aurelian   Sirmium   Pannonia      Appo… Assa… Praet… Prin… &lt;NA&gt;  &lt;NA&gt;  0214…
+##  4 Balbinus   &lt;NA&gt;      Unknown       Appo… Assa… Praet… Prin… birt… &lt;NA&gt;  0178…
+##  5 Caracalla  Lugdunum  Gallia Lugdu… Birt… Assa… Other… Prin… reig… &lt;NA&gt;  0188…
+##  6 Carinus    &lt;NA&gt;      Unknown       Birt… Died… Oppos… Prin… deat… &lt;NA&gt;  ?    
+##  7 Carus      Narbo     Gallia Narbo… Seiz… Natu… Light… Prin… birt… &lt;NA&gt;  0230…
+##  8 Claudius   Lugdunum  Gallia Lugdu… Birt… Assa… Wife   Prin… birt… Redd… 0009…
+##  9 Commodus   Lanuvium  Italia        Birt… Assa… Praet… Prin… reig… &lt;NA&gt;  0161…
+## 10 Constanti… Arelate   Gallia Narbo… Birt… Exec… Other… Domi… birt… &lt;NA&gt;  0316…
+## # ℹ 31 more rows
+## # ℹ 5 more variables: Death &lt;chr&gt;, FullName &lt;chr&gt;, Dynasty &lt;chr&gt;, Beg &lt;chr&gt;,
+## #   End &lt;chr&gt;</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;mean&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
 <pre><code>## There were 116 matched observations by ID variable across datasets in database.</code></pre>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
@@ -701,28 +702,28 @@ methods:</p>
 ##  8 Claudius       0041-01-25  0054-10-13 
 ##  9 Commodus       0177        0192-12-31 
 ## 10 Constantine II 0337-05-22  0340-01-01 
-## # … with 31 more rows</code></pre>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;median&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
+## # ℹ 31 more rows</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;median&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
 <pre><code>## There were 116 matched observations by ID variable across datasets in database.</code></pre>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
 <pre><code>## # A tibble: 138 × 15
-##    ID           CityB…¹ Provi…² Rise  Cause Killer Era   Notes Verif Birth Death
-##    &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 Aemilian     &lt;NA&gt;    Africa  Appo… Assa… Other… Prin… birt… &lt;NA&gt;  0207… 0253…
-##  2 Allectus     &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  ?     297  
-##  3 Anastasius   &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  430   518  
-##  4 Anthemius    &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  420   472  
-##  5 Antoninus P… &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  86    161  
-##  6 Antonius Pi… Lanuvi… Italia  Birt… Natu… Disea… Prin… &lt;NA&gt;  &lt;NA&gt;  0086… 0161…
-##  7 Arcadius     &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  377   408  
-##  8 Augustus     Rome    Italia  Birt… Assa… Wife   Prin… birt… Redd… 0062… 0014…
-##  9 Aulus Vitel… &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
-## 10 Aurelian     Sirmium Pannon… Appo… Assa… Praet… Prin… &lt;NA&gt;  &lt;NA&gt;  0214… 0275…
-## # … with 128 more rows, 4 more variables: FullName &lt;chr&gt;, Dynasty &lt;chr&gt;,
-## #   Beg &lt;chr&gt;, End &lt;chr&gt;, and abbreviated variable names ¹​CityBirth,
-## #   ²​ProvinceBirth</code></pre>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;random&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
+##    ID         CityBirth ProvinceBirth Rise  Cause Killer Era   Notes Verif Birth
+##    &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 Aemilian   &lt;NA&gt;      Africa        Appo… Assa… Other… Prin… birt… &lt;NA&gt;  0207…
+##  2 Allectus   &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  ?    
+##  3 Anastasius &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  430  
+##  4 Anthemius  &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  420  
+##  5 Antoninus… &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  86   
+##  6 Antonius … Lanuvium  Italia        Birt… Natu… Disea… Prin… &lt;NA&gt;  &lt;NA&gt;  0086…
+##  7 Arcadius   &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  377  
+##  8 Augustus   Rome      Italia        Birt… Assa… Wife   Prin… birt… Redd… 0062…
+##  9 Aulus Vit… &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+## 10 Aurelian   Sirmium   Pannonia      Appo… Assa… Praet… Prin… &lt;NA&gt;  &lt;NA&gt;  0214…
+## # ℹ 128 more rows
+## # ℹ 5 more variables: Death &lt;chr&gt;, FullName &lt;chr&gt;, Dynasty &lt;chr&gt;, Beg &lt;chr&gt;,
+## #   End &lt;chr&gt;</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;random&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
 <pre><code>## There were 116 matched observations by ID variable across datasets in database.</code></pre>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
@@ -730,19 +731,19 @@ methods:</p>
 ##    ID             Beg        End       
 ##    &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;     
 ##  1 Aemilian       0253-08-15 0253-12-31
-##  2 Augustus       -031-12-31 0014-12-31
-##  3 Aurelian       0270-12-31 0275-09-15
-##  4 Balbinus       0238-04-22 0238-07-29
-##  5 Caracalla      0198-12-31 0217-04-08
-##  6 Carinus        0283-12-31 0285-12-31
+##  2 Augustus       -026-01-16 0014-12-31
+##  3 Aurelian       0270-09-15 0275-09-15
+##  4 Balbinus       0238-04-22 0238-12-31
+##  5 Caracalla      0211-12-31 0217-04-08
+##  6 Carinus        0283-12-31 0285-08-01
 ##  7 Carus          0282-12-31 0283-08-01
 ##  8 Claudius       0041-12-31 0054-12-31
-##  9 Commodus       0180-12-31 0192-12-31
-## 10 Constantine II 0337-05-22 0340-12-31
-## # … with 31 more rows</code></pre>
+##  9 Commodus       0177-12-31 0192-12-31
+## 10 Constantine II 0337-05-22 0340-01-01
+## # ℹ 31 more rows</code></pre>
 <p>Users can even specify how conflicts for different variables should
 be ‘resolved’:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>, <span class="at">resolve =</span> <span class="fu">c</span>(<span class="at">Beg =</span> <span class="st">&quot;min&quot;</span>, <span class="at">End =</span> <span class="st">&quot;max&quot;</span>), <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;every&quot;</span>, <span class="at">resolve =</span> <span class="fu">c</span>(<span class="at">Beg =</span> <span class="st">&quot;min&quot;</span>, <span class="at">End =</span> <span class="st">&quot;max&quot;</span>), <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
 <pre><code>## There were 116 matched observations by ID variable across datasets in database.</code></pre>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
@@ -759,33 +760,33 @@ be ‘resolved’:</p>
 ##  8 Augustus        -026-01-16 0014-12-31
 ##  9 Aulus Vitellius 0069-07    0069-12   
 ## 10 Aurelian        0270-01-01 0275-12-31
-## # … with 128 more rows</code></pre>
+## # ℹ 128 more rows</code></pre>
 <p>Alternatively, users can “favour” a dataset in a database over
 others:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> <span class="fu">favour</span>(emperors, <span class="st">&quot;UNRV&quot;</span>), <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;coalesce&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> <span class="fu">favour</span>(emperors, <span class="st">&quot;UNRV&quot;</span>), <span class="at">rows =</span> <span class="st">&quot;every&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>, <span class="at">resolve =</span> <span class="st">&quot;coalesce&quot;</span>, <span class="at">key =</span> <span class="st">&quot;ID&quot;</span>)</span></code></pre></div>
 <pre><code>## There were 116 matched observations by ID variable across datasets in database.</code></pre>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
 <pre><code>## # A tibble: 41 × 15
-##    ID       FullN…¹ Birth Death CityB…² Provi…³ Rise  Cause Killer Dynasty Era  
-##    &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;
-##  1 Aemilian &quot;Marcu… 207?  253   &lt;NA&gt;    Africa  Appo… Assa… Other… Gordian Prin…
-##  2 Augustus &quot;Gaius… 63 BC 14    Rome    Italia  Birt… Assa… Wife   Julio-… Prin…
-##  3 Aurelian &quot;Luciu… 214   275   Sirmium Pannon… Appo… Assa… Praet… Gordian Prin…
-##  4 Balbinus &quot;Decim… 170?  238   &lt;NA&gt;    Unknown Appo… Assa… Praet… Gordian Prin…
-##  5 Caracal… &quot;born … 188   217   Lugdun… Gallia… Birt… Assa… Other… Severan Prin…
-##  6 Carinus  &quot;Marcu… ?     285   &lt;NA&gt;    Unknown Birt… Died… Oppos… co-emp… Prin…
-##  7 Carus    &quot;Marcu… 230?  283   Narbo   Gallia… Seiz… Natu… Light… .       Prin…
-##  8 Claudius &quot;Tiber… 10 BC 41    Lugdun… Gallia… Birt… Assa… Wife   Julio-… Prin…
-##  9 Commodus &quot;Marcu… 161   192   Lanuvi… Italia  Birt… Assa… Praet… Adopti… Prin…
-## 10 Constan… &quot;Flavi… 317   340   Arelate Gallia… Birt… Exec… Other… House … Domi…
-## # … with 31 more rows, 4 more variables: Notes &lt;chr&gt;, Verif &lt;chr&gt;, Beg &lt;mdate&gt;,
-## #   End &lt;mdate&gt;, and abbreviated variable names ¹​FullName, ²​CityBirth,
-## #   ³​ProvinceBirth</code></pre>
+##    ID    FullName Birth Death CityBirth ProvinceBirth Rise  Cause Killer Dynasty
+##    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  
+##  1 Aemi… &quot;Marcus… 207?  253   &lt;NA&gt;      Africa        Appo… Assa… Other… Gordian
+##  2 Augu… &quot;Gaius … 63 BC 14    Rome      Italia        Birt… Assa… Wife   Julio-…
+##  3 Aure… &quot;Lucius… 214   275   Sirmium   Pannonia      Appo… Assa… Praet… Gordian
+##  4 Balb… &quot;Decimu… 170?  238   &lt;NA&gt;      Unknown       Appo… Assa… Praet… Gordian
+##  5 Cara… &quot;born L… 188   217   Lugdunum  Gallia Lugdu… Birt… Assa… Other… Severan
+##  6 Cari… &quot;Marcus… ?     285   &lt;NA&gt;      Unknown       Birt… Died… Oppos… co-emp…
+##  7 Carus &quot;Marcus… 230?  283   Narbo     Gallia Narbo… Seiz… Natu… Light… .      
+##  8 Clau… &quot;Tiberi… 10 BC 41    Lugdunum  Gallia Lugdu… Birt… Assa… Wife   Julio-…
+##  9 Comm… &quot;Marcus… 161   192   Lanuvium  Italia        Birt… Assa… Praet… Adopti…
+## 10 Cons… &quot;Flaviu… 317   340   Arelate   Gallia Narbo… Birt… Exec… Other… House …
+## # ℹ 31 more rows
+## # ℹ 5 more variables: Era &lt;chr&gt;, Notes &lt;chr&gt;, Verif &lt;chr&gt;, Beg &lt;mdate&gt;,
+## #   End &lt;mdate&gt;</code></pre>
 <p>Users can, even, declare multiple key ID columns to consolidate a
 database or multiple datasets:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>, <span class="at">resolve =</span> <span class="fu">c</span>(<span class="at">Death =</span> <span class="st">&quot;max&quot;</span>, <span class="at">Cause =</span> <span class="st">&quot;coalesce&quot;</span>),</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">key =</span> <span class="fu">c</span>(<span class="st">&quot;ID&quot;</span>, <span class="st">&quot;Beg&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">consolidate</span>(<span class="at">database =</span> emperors, <span class="at">rows =</span> <span class="st">&quot;any&quot;</span>, <span class="at">cols =</span> <span class="st">&quot;any&quot;</span>, <span class="at">resolve =</span> <span class="fu">c</span>(<span class="at">Death =</span> <span class="st">&quot;max&quot;</span>, <span class="at">Cause =</span> <span class="st">&quot;coalesce&quot;</span>),</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">key =</span> <span class="fu">c</span>(<span class="st">&quot;ID&quot;</span>, <span class="st">&quot;Beg&quot;</span>))</span></code></pre></div>
 <pre><code>## ℹ Resolving conflicts...
 ## ℹ Coalescing compatible rows...</code></pre>
 <pre><code>## # A tibble: 202 × 4
@@ -801,7 +802,7 @@ database or multiple datasets:</p>
 ##  8 Arcadius       0383        &lt;NA&gt;           &lt;NA&gt;       
 ##  9 Arcadius       0395        &lt;NA&gt;           408        
 ## 10 Augustus       -0026-01-16 Assassination  0014-08-19 
-## # … with 192 more rows</code></pre>
+## # ℹ 192 more rows</code></pre>
 </div>
 
 
