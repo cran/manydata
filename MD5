@@ -1,8 +1,8 @@
-8af23fc4929c66dac0f48ea705f2ed42 *DESCRIPTION
+91c58ac955cda4f9e1361e836791e337 *DESCRIPTION
 dafa4c4be075ff1df88ae94781403ebf *NAMESPACE
-550540d743b8b2a71a167e1a2eb6efe4 *NEWS.md
-24d12de22ec7d82d4496009c085ae081 *R/call.R
-4cd36319969cf0f7d7da82bf954eaa62 *R/compare.R
+7f7aa78fc1d051d81801ea0987118cc6 *NEWS.md
+31d6d46b884f9cc3a23e81af2c18cdfa *R/call.R
+c8056c5da4e1fcf174829f21d3248a33 *R/compare.R
 ab04fd14dc87965f9dfe5c06338d451a *R/consolidate.R
 ab2fb03abfd62b1b1a433d22c2bf0ba5 *R/emperors.R
 756ab9de4d1cc15967d3dd213bce8bb2 *R/manydata-defunct.R
@@ -10,7 +10,7 @@ a5b3b299432fa1dd50e784e59e3b4239 *R/sysdata.rda
 2b4f19a15871c6b3c7145584315fb294 *R/wrangling_data.R
 78abdf71e3fb457accec1b44041e4219 *R/zzz.R
 164788173ebf35347580576e4295bb7f *README.md
-1be5d5dceab1a7aa6e0aa400ecaecee5 *data/emperors.rda
+d29025b567a1fcb1e005e46b3f7fbaf8 *data/emperors.rda
 37984579c4d5472d0783f31e1f9aca0d *inst/CITATION
 106b7927de432e44bd60551285dc4a7f *inst/cheatsheet.pdf
 8af307fbf659db894ddc38fd737cdbf4 *inst/cheatsheet.png
@@ -44,10 +44,10 @@ c8cc8ef9e0560c2005dd8b2a6ff9465b *man/reunite.Rd
 d8c8cf5c033df526e4e859c0e23f9f26 *man/transmutate.Rd
 e4852f97ed95961d25e7bbc091230355 *tests/testthat.R
 5bf62d304f5c317907fb6ad9ac27e86b *tests/testthat/Rplots.pdf
-9e0c3bb760d293d103f18d03e81ccc58 *tests/testthat/test_UNRV.R
-d26d2cfd6c3336ac4091ed12fedcb6cd *tests/testthat/test_britannica.R
-b3e00a77a3ee560d1566d73d854b6e0b *tests/testthat/test_call.R
-6a782b0b033f7ad148c5ea1ef90a12fd *tests/testthat/test_compare.R
+b15046710ce58fe861effac0625886d5 *tests/testthat/test_UNRV.R
+1dc4ecd5027763ffe9a98bdc39d12da2 *tests/testthat/test_britannica.R
+25abafed407b6587b8ddf86181a50b59 *tests/testthat/test_call.R
+66765af484062201a2f8d4017db45dd3 *tests/testthat/test_compare.R
 4db2f8ef95f0a1dd2efd9cc238679c4d *tests/testthat/test_consolidate.R
-859d3650d52bd98374bd330fb07ab827 *tests/testthat/test_wikipedia.R
+82c3a77b3fe8750ff343dd1b53c20659 *tests/testthat/test_wikipedia.R
 cb1e54dd5541e958ce71daaa1d018b05 *tests/testthat/test_wrangling.R
